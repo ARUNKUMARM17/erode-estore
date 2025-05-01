@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: #0f0f10;
+  color: #fff;
+}
+
+input,
+textarea {
+  color: #000;
+}
+
+/* Prime Pricing Styles */
+.price-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 80px;
+  margin: 0.75rem 0;
+}
+
+.prime-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.prime-icon {
+  color: #00A8E1;
+  font-size: 1.2rem;
+}
+
+.discounted-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #FF6B6B;
+}
+
+.original-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.strike-through {
+  text-decoration: line-through;
+  color: #9CA3AF;
+  font-size: 0.9rem;
+}
+
+.discount-tag {
+  color: #10B981;
+  font-size: 0.9rem;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.savings {
+  color: #10B981;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.regular-price {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+.prime-eligible {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #00A8E1;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+/* Add spacing between product elements */
+.product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.product-title {
+  flex: 1;
+  margin-right: 1rem;
+}
