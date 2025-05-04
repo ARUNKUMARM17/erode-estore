@@ -12,6 +12,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth) || { userInfo: null };
 
   const [createOrder, { isLoading, error }] = useCreateOrderMutation();
 
@@ -22,6 +23,17 @@ const PlaceOrder = () => {
   }, [cart.paymentMethod, cart.shippingAddress.address, navigate]);
 
   const dispatch = useDispatch();
+
+  const calculateUnitPrice = (item) => {
+    if (userInfo?.isPrimeMember && item.primeDiscount?.discountedPrice) {
+      return item.primeDiscount.discountedPrice;
+    }
+    return item.price;
+  };
+
+  const calculateTotalPrice = (item) => {
+    return item.qty * calculateUnitPrice(item);
+  };
 
   const placeOrderHandler = async () => {
     try {
@@ -40,6 +52,9 @@ const PlaceOrder = () => {
       toast.error(error);
     }
   };
+
+  const itemsPrice = cart.cartItems.reduce((acc, item) => acc + calculateTotalPrice(item), 0).toFixed(2);
+  const totalPrice = (parseFloat(itemsPrice) + cart.shippingPrice + cart.taxPrice).toFixed(2);
 
   return (
     <>
@@ -76,9 +91,9 @@ const PlaceOrder = () => {
                       <Link to={`/product/${item.product}`}>{item.name}</Link>
                     </td>
                     <td className="p-2">{item.qty}</td>
-                    <td className="p-2">₹{item.price.toFixed(2)}</td>
+                    <td className="p-2">₹{calculateUnitPrice(item).toFixed(2)}</td>
                     <td className="p-2">
-                    ₹{(item.qty * item.price).toFixed(2)}
+                      ₹{calculateTotalPrice(item).toFixed(2)}
                     </td>
                   </tr>
                 ))}
@@ -92,8 +107,7 @@ const PlaceOrder = () => {
           <div className="flex justify-between flex-wrap p-8 bg-[#181818]">
             <ul className="text-lg">
               <li>
-                <span className="font-semibold mb-4">Items:</span> ₹
-                {cart.itemsPrice}
+                <span className="font-semibold mb-4">Items:</span> ₹ {itemsPrice}
               </li>
               <li>
                 <span className="font-semibold mb-4">Shipping:</span> ₹
@@ -104,8 +118,7 @@ const PlaceOrder = () => {
                 {cart.taxPrice}
               </li>
               <li>
-                <span className="font-semibold mb-4">Total:</span> ₹
-                {cart.totalPrice}
+                <span className="font-semibold mb-4">Total:</span> ₹ {totalPrice}
               </li>
             </ul>
 

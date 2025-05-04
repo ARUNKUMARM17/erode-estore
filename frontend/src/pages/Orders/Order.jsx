@@ -119,15 +119,33 @@ const Order = () => {
     }
   };
 
-  return isLoading ? (
-    <Loader />
-  ) : error ? (
-    <Message variant="danger">{error?.data?.message || error.message}</Message>
-  ) : (
+  // Add console logs to debug the order data
+  console.log('Order Data:', order);
+
+  const calculatePrice = (item) => {
+    if (userInfo?.isPrimeMember && item.primeDiscount?.discountedPrice) {
+      return item.primeDiscount.discountedPrice;
+    }
+    return item.price;
+  };
+
+  // Ensure data fetching completes before accessing the order object
+  if (isLoading || !order) return <Loader />;
+  if (error) return <Message variant="danger">{error?.data?.message || error.message}</Message>;
+
+  // Use a fallback for the order object only if it is undefined
+  const orderData = order || { orderItems: [], shippingPrice: 0, taxPrice: 0 };
+
+  // Calculate the total items price using the discounted price for Prime members
+  const itemsPrice = orderData.orderItems.reduce((acc, item) => acc + calculatePrice(item) * item.qty, 0).toFixed(2);
+
+  const totalPrice = (parseFloat(itemsPrice) + orderData.shippingPrice + orderData.taxPrice).toFixed(2);
+
+  return (
     <div className="container flex flex-col ml-[10rem] md:flex-row">
       <div className="md:w-2/3 pr-4">
         <div className="border gray-300 mt-5 pb-4 mb-5">
-          {order.orderItems.length === 0 ? (
+          {orderData.orderItems.length === 0 ? (
             <Message>Order is empty</Message>
           ) : (
             <div className="overflow-x-auto">
@@ -143,7 +161,7 @@ const Order = () => {
                 </thead>
 
                 <tbody>
-                  {order.orderItems.map((item, index) => (
+                  {orderData.orderItems.map((item, index) => (
                     <tr key={index}>
                       <td className="p-2">
                         <img
@@ -158,9 +176,9 @@ const Order = () => {
                       </td>
 
                       <td className="p-2 text-center">{item.qty}</td>
-                      <td className="p-2 text-center">₹ {item.price}</td>
+                      <td className="p-2 text-center">₹ {calculatePrice(item).toFixed(2)}</td>
                       <td className="p-2 text-center">
-                        ₹ {(item.qty * item.price).toFixed(2)}
+                        ₹ {(item.qty * calculatePrice(item)).toFixed(2)}
                       </td>
                     </tr>
                   ))}
@@ -175,31 +193,31 @@ const Order = () => {
         <div className="mt-5 border-gray-300 pb-4 mb-4">
           <h2 className="text-xl font-bold mb-2">Shipping</h2>
           <p className="mb-4 mt-4">
-            <strong className="text-pink-500">Order:</strong> {order._id}
+            <strong className="text-pink-500">Order:</strong> {orderData._id}
           </p>
 
           <p className="mb-4">
             <strong className="text-pink-500">Name:</strong>{" "}
-            {order.user.username}
+            {orderData.user.username}
           </p>
 
           <p className="mb-4">
-            <strong className="text-pink-500">Email:</strong> {order.user.email}
+            <strong className="text-pink-500">Email:</strong> {orderData.user.email}
           </p>
 
           <p className="mb-4">
             <strong className="text-pink-500">Address:</strong>{" "}
-            {order.shippingAddress.address}, {order.shippingAddress.city}{" "}
-            {order.shippingAddress.postalCode}, {order.shippingAddress.country}
+            {orderData.shippingAddress.address}, {orderData.shippingAddress.city}{" "}
+            {orderData.shippingAddress.postalCode}, {orderData.shippingAddress.country}
           </p>
 
           <p className="mb-4">
             <strong className="text-pink-500">Method:</strong>{" "}
-            {order.paymentMethod}
+            {orderData.paymentMethod}
           </p>
 
-          {order.isPaid ? (
-            <Message variant="success">Paid on {order.paidAt}</Message>
+          {orderData.isPaid ? (
+            <Message variant="success">Paid on {orderData.paidAt}</Message>
           ) : (
             <Message variant="danger">Not paid</Message>
           )}
@@ -208,22 +226,22 @@ const Order = () => {
         <h2 className="text-xl font-bold mb-2 mt-[3rem]">Order Summary</h2>
         <div className="flex justify-between mb-2">
           <span>Items</span>
-          <span>₹ {order.itemsPrice}</span>
+          <span>₹ {itemsPrice}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span>Shipping</span>
-          <span>₹ {order.shippingPrice}</span>
+          <span>₹ {orderData.shippingPrice}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span>Tax</span>
-          <span>₹ {order.taxPrice}</span>
+          <span>₹ {orderData.taxPrice}</span>
         </div>
         <div className="flex justify-between mb-2">
           <span>Total</span>
-          <span>₹ {order.totalPrice}</span>
+          <span>₹ {totalPrice}</span>
         </div>
 
-        {!order.isPaid && (
+        {!orderData.isPaid && (
           <div className="mt-4">
             <div className="bg-white p-4 rounded-lg shadow">
               {paymentError && (
@@ -257,7 +275,7 @@ const Order = () => {
         )}
 
         {loadingDeliver && <Loader />}
-        {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+        {userInfo && userInfo.isAdmin && orderData.isPaid && !orderData.isDelivered && (
           <div>
             <button
               type="button"

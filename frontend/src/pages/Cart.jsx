@@ -10,6 +10,8 @@ const Cart = () => {
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
 
+  const { userInfo } = useSelector((state) => state.auth) || { userInfo: null };
+
   const addToCartHandler = (product, qty) => {
     dispatch(addToCart({ ...product, qty }));
   };
@@ -20,6 +22,20 @@ const Cart = () => {
 
   const checkoutHandler = () => {
     navigate("/login?redirect=/shipping");
+  };
+
+  // Add console logs to debug the price calculation
+  console.log('User Info:', userInfo);
+  console.log('Cart Items:', cartItems);
+
+  const calculatePrice = (item) => {
+    console.log('Calculating price for item:', item.name);
+    console.log('Is Prime Member:', userInfo?.isPrimeMember);
+    console.log('Prime Discounted Price:', item.primeDiscount?.discountedPrice);
+    if (userInfo?.isPrimeMember && item.primeDiscount?.discountedPrice) {
+      return item.qty * item.primeDiscount.discountedPrice;
+    }
+    return item.qty * item.price;
   };
 
   return (
@@ -51,7 +67,7 @@ const Cart = () => {
 
                     <div className="mt-2 text-white">{item.brand}</div>
                     <div className="mt-2 text-white font-bold">
-                    ₹ {item.price}
+                      ₹ {calculatePrice(item).toFixed(2)}
                     </div>
                   </div>
 
@@ -89,9 +105,9 @@ const Cart = () => {
                   </h2>
 
                   <div className="text-2xl font-bold">
-                    ${" "}
+                    {"₹"}
                     {cartItems
-                      .reduce((acc, item) => acc + item.qty * item.price, 0)
+                      .reduce((acc, item) => acc + calculatePrice(item), 0)
                       .toFixed(2)}
                   </div>
 

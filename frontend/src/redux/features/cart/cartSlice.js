@@ -1,10 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Update initial state to use Stripe as default payment method
+
 const initialState = {
   cartItems: [],
   shippingAddress: {},
-  paymentMethod: "Stripe" // Changed from "PayPal" to "Stripe"
+  paymentMethod: "Stripe" 
 };
 
 // Try to load state from localStorage, but use initialState as fallback
@@ -17,7 +17,7 @@ const loadState = () => {
       return {
         ...initialState,
         ...parsedState,
-        paymentMethod: "Stripe", // Ensure Stripe is set as payment method
+        paymentMethod: "Stripe", 
         cartItems: Array.isArray(parsedState.cartItems) ? parsedState.cartItems : []
       };
     }

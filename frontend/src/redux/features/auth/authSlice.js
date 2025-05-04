@@ -11,14 +11,17 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     setCredentials: (state, action) => {
+      console.log('setCredentials action:', action.payload);
       state.userInfo = action.payload;
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
       
       // Update Prime status in localStorage
       if (action.payload?.isPrimeMember) {
+        console.log('User is a Prime Member');
         localStorage.setItem("isPrimeMember", "true");
         localStorage.setItem("primeSubscription", JSON.stringify(action.payload.primeSubscription));
       } else {
+        console.log('User is not a Prime Member');
         localStorage.removeItem("isPrimeMember");
         localStorage.removeItem("primeSubscription");
       }
@@ -39,9 +42,11 @@ const authSlice = createSlice({
         localStorage.setItem("userInfo", JSON.stringify(state.userInfo));
         
         if (action.payload.isPrimeMember) {
+          console.log('Updating Prime status: User is a Prime Member');
           localStorage.setItem("isPrimeMember", "true");
           localStorage.setItem("primeSubscription", JSON.stringify(action.payload.primeSubscription));
         } else {
+          console.log('Updating Prime status: User is not a Prime Member');
           localStorage.removeItem("isPrimeMember");
           localStorage.removeItem("primeSubscription");
         }

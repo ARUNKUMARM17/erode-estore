@@ -12,6 +12,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log('User data after login:', data);
           // If user is logged in, check Prime status
           if (data) {
             const response = await fetch('/api/users/prime/status', {
@@ -20,10 +21,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
               },
             });
             const primeStatus = await response.json();
+            console.log('Prime status response:', primeStatus);
             
             // Update the user data with Prime status
             data.isPrimeMember = primeStatus.isPrimeMember;
             data.primeSubscription = primeStatus.primeSubscription;
+            console.log('Updated user data with Prime status:', data);
           }
         } catch (err) {
           console.error('Error checking Prime status:', err);

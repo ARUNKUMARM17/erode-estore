@@ -14,6 +14,12 @@ const orderSchema = mongoose.Schema(
           required: true,
           ref: "Product",
         },
+        primeDiscount: {
+          isEligible: { type: Boolean },
+          discountType: { type: String },
+          discountValue: { type: Number },
+          discountedPrice: { type: Number },
+        },
       },
     ],
 

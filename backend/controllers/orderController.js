@@ -39,6 +39,9 @@ const createOrder = async (req, res) => {
       _id: { $in: orderItems.map((x) => x._id) },
     });
 
+    // Determine if user is prime
+    const isPrimeMember = req.user && req.user.isPrimeMember;
+
     const dbOrderItems = orderItems.map((itemFromClient) => {
       const matchingItemFromDB = itemsFromDB.find(
         (itemFromDB) => itemFromDB._id.toString() === itemFromClient._id
@@ -49,10 +52,30 @@ const createOrder = async (req, res) => {
         throw new Error(`Product not found: ${itemFromClient._id}`);
       }
 
+      // Calculate discounted price if prime
+      let discountedPrice = undefined;
+      if (
+        isPrimeMember &&
+        matchingItemFromDB.primeDiscount?.isEligible &&
+        matchingItemFromDB.primeDiscount?.discountValue > 0
+      ) {
+        if (matchingItemFromDB.primeDiscount.discountType === 'percentage') {
+          discountedPrice =
+            matchingItemFromDB.price * (1 - matchingItemFromDB.primeDiscount.discountValue / 100);
+        } else if (matchingItemFromDB.primeDiscount.discountType === 'fixed') {
+          discountedPrice =
+            Math.max(0, matchingItemFromDB.price - matchingItemFromDB.primeDiscount.discountValue);
+        }
+      }
+
       return {
         ...itemFromClient,
         product: itemFromClient._id,
         price: matchingItemFromDB.price,
+        primeDiscount: {
+          ...matchingItemFromDB.primeDiscount,
+          discountedPrice: discountedPrice,
+        },
         _id: undefined,
       };
     });
