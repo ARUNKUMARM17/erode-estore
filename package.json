@@ -1,5 +1,5 @@
 {
-  "name": "MERN e-commerce",
+  "name": "erode-ecommerce",
   "version": "1.0.0",
   "description": "MERN Stack E-Commerce Project",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "dev": "concurrently \"npm run frontend\" \"npm run backend"
   },
   "keywords": [],
-  "author": "HuXn WebDev",
+  "author": "Arun Kumar",
   "license": "ISC",
   "dependencies": {
     "@stripe/stripe-js": "^7.2.0",
