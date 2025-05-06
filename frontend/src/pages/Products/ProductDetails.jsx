@@ -40,6 +40,7 @@ const ProductDetails = () => {
   const [showZoom, setShowZoom] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgOrientation, setImgOrientation] = useState("square");
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   const {
     data: product,
@@ -165,12 +166,12 @@ const ProductDetails = () => {
             <span className="text-white">{product.name}</span>
           </div>
           
-          <div className="flex flex-col lg:flex-row gap-10">
-            {/* Product Image */}
-            <div className="lg:w-1/2">
-              <div className="relative bg-[#1A1A1A] rounded-xl overflow-hidden shadow-lg">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+            {/* Product Image Carousel */}
+            <div className="lg:w-full flex justify-center items-center">
+              <div className="relative bg-[#1A1A1A] rounded-xl overflow-hidden shadow-lg max-h-[500px] aspect-w-1 aspect-h-1">
                 <div 
-                  className="aspect-square overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#1c1c22] to-[#131317] relative"
+                  className="overflow-hidden flex items-center justify-center bg-gradient-to-b from-[#1c1c22] to-[#131317] relative"
                   onMouseMove={handleMouseMove}
                   onMouseEnter={() => setShowZoom(true)}
                   onMouseLeave={() => setShowZoom(false)}
@@ -190,9 +191,9 @@ const ProductDetails = () => {
                     alt={product.name}
                     className={`
                       z-10 relative transition-transform duration-200 ease-out object-contain
-                      ${imgOrientation === "landscape" ? "w-[90%] max-h-[80%]" : ""}
-                      ${imgOrientation === "portrait" ? "h-[90%] max-w-[70%]" : ""}
-                      ${imgOrientation === "square" ? "max-w-[80%] max-h-[80%]" : ""}
+                      ${imgOrientation === "landscape" ? "w-full max-h-full" : ""}
+                      ${imgOrientation === "portrait" ? "h-full max-w-full" : ""}
+                      ${imgOrientation === "square" ? "max-w-full max-h-full" : ""}
                       ${!imgLoaded ? "opacity-0" : "opacity-100"}
                       mix-blend-normal
                     `}
@@ -226,20 +227,18 @@ const ProductDetails = () => {
               </div>
             </div>
             
-            {/* Product Info */}
-            <div className="lg:w-1/2">
+            {/* Product Info - Sticky Sidebar */}
+            <div className="lg:w-full max-h-[500px] overflow-y-auto sticky top-0">
               <div className="bg-[#1A1A1A] rounded-xl p-6">
-                {/* Product Brand Badge */}
-                {/* <div className="mb-2">
-                  <span className="inline-block bg-pink-900/30 text-pink-500 text-xs font-semibold px-2.5 py-1 rounded-full border border-pink-900 max-w-full truncate">
-                    {product.category.name}
-                  </span>
-                </div> */}
-                
-                {/* Product Name */}
-                <h1 className="text-3xl font-bold text-white mb-4 break-words" title={product.name}>
-                  {product.name}
-                </h1>
+                {/* Product Name with Tooltip */}
+                <div className="relative group">
+                  <h1 className="text-3xl font-bold text-white mb-4 break-words" title={product.name}>
+                    {product.name.length > 50 ? `${product.name.substring(0, 50)}...` : product.name}
+                  </h1>
+                  <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-sm rounded-lg p-2 shadow-lg">
+                    {product.name}
+                  </div>
+                </div>
                 
                 {/* Rating and Created Date */}
                 <div className="flex flex-wrap items-center gap-4 mb-4 text-sm text-gray-400">
@@ -304,34 +303,23 @@ const ProductDetails = () => {
                   )}
                 </div>
                 
-                {/* Category - Improved with better spacing and overflow handling */}
-                {/* <div className="mb-4 flex items-center">
-                  <span className="text-gray-400">Category:</span>
-                  <div className="ml-2 max-w-[70%] inline-block">
-                    <span className="text-pink-500 font-medium break-words" title={product.category}>
-                      {product.category}
-                    </span>
-                  </div>
-                </div> */}
-
-                
-                {/* Enhanced Description */}
-                {/* <div className="mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-800">
+                {/* Enhanced Description with Dropdown */}
+                <div className="mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-800">
                   <h3 className="text-lg font-semibold mb-3 text-white flex items-center">
                     <FaTag className="mr-2 text-pink-500" /> Product Description
                   </h3>
-                  <div className="text-gray-300 leading-relaxed overflow-auto max-h-[300px] pr-2">
+                  <div className="text-gray-300 leading-relaxed overflow-hidden max-h-[300px] pr-2">
                     {formatDescription(product.description)}
                   </div>
-                </div> */}
-                <div className="mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-800">
-  <h3 className="text-lg font-semibold mb-3 text-white flex items-center">
-    <FaTag className="mr-2 text-pink-500" /> Product Description
-  </h3>
-  <div className="text-gray-300 leading-relaxed overflow-auto max-h-[300px] pr-2">
-    {formatDescription(product.description)}
-  </div>
-</div>
+                  {product.description && product.description.split(/[•*]\s/).length > 2 && (
+                    <button
+                      onClick={() => setShowFullDescription(!showFullDescription)}
+                      className="mt-2 text-pink-500 hover:text-pink-700 transition-colors"
+                    >
+                      {showFullDescription ? 'Show Less' : 'Show More'}
+                    </button>
+                  )}
+                </div>
                 
                 {/* Key Features (if available) */}
                 {product.features && (

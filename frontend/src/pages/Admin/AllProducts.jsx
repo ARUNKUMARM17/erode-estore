@@ -17,45 +17,43 @@ const AllProducts = () => {
 
   useEffect(() => {
     if (products) {
-      let filtered = [...products];
-      
+      let sortedProducts = [...products];
+
       // Apply search filter
-      if (searchTerm) {
-        filtered = filtered.filter(
-          product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (product.category?.name && product.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      if (searchTerm.trim() !== "") {
+        sortedProducts = sortedProducts.filter(product =>
+          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (product.brand && product.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (product.category && product.category.name.toLowerCase().includes(searchTerm.toLowerCase()))
         );
       }
-      
-      // Apply stock filter
-      if (stockFilter === "inStock") {
-        filtered = filtered.filter(product => product.countInStock > 0);
-      } else if (stockFilter === "outOfStock") {
-        filtered = filtered.filter(product => product.countInStock === 0);
-      } else if (stockFilter === "lowStock") {
-        filtered = filtered.filter(product => product.countInStock > 0 && product.countInStock <= 5);
+
+      switch (sortOrder) {
+        case 'newest':
+          sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+        case 'oldest':
+          sortedProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'priceAsc':
+          sortedProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'priceDesc':
+          sortedProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'nameAsc':
+          sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'nameDesc':
+          sortedProducts.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+        default:
+          break;
       }
-      
-      // Apply sorting
-      if (sortOrder === "newest") {
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      } else if (sortOrder === "oldest") {
-        filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-      } else if (sortOrder === "priceAsc") {
-        filtered.sort((a, b) => a.price - b.price);
-      } else if (sortOrder === "priceDesc") {
-        filtered.sort((a, b) => b.price - a.price);
-      } else if (sortOrder === "nameAsc") {
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
-      } else if (sortOrder === "nameDesc") {
-        filtered.sort((a, b) => b.name.localeCompare(a.name));
-      }
-      
-      setFilteredProducts(filtered);
+
+      setFilteredProducts(sortedProducts);
     }
-  }, [products, searchTerm, sortOrder, stockFilter]);
+  }, [products, sortOrder, searchTerm]);
 
   const handleStockFilter = (filter) => {
     setStockFilter(filter);

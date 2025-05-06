@@ -198,11 +198,12 @@ const Order = () => {
 
           <p className="mb-4">
             <strong className="text-pink-500">Name:</strong>{" "}
-            {orderData.user.username}
+            {orderData.user ? orderData.user.username : "N/A"}
           </p>
 
           <p className="mb-4">
-            <strong className="text-pink-500">Email:</strong> {orderData.user.email}
+            <strong className="text-pink-500">Email:</strong>{" "}
+            {orderData.user ? orderData.user.email : "N/A"}
           </p>
 
           <p className="mb-4">

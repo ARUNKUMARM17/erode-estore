@@ -1,11 +1,25 @@
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
-import { Link } from "react-router-dom";
-import { useGetOrdersQuery } from "../../redux/api/orderApiSlice";
+// import { Link } from "react-router-dom";
+import { useGetOrdersQuery, useDeliverOrderMutation } from "../../redux/api/orderApiSlice";
 import AdminMenu from "./AdminMenu";
+import { toast } from "react-hot-toast";
 
 const OrderList = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
+  const [deliverOrder] = useDeliverOrderMutation();
+
+  console.log("Order Data:", orders);
+
+  const handleDeliverOrder = async (orderId) => {
+    try {
+      await deliverOrder(orderId);
+      toast.success("Order marked as delivered");
+      // Optionally refetch orders or update state
+    } catch (error) {
+      toast.error("Failed to update order status");
+    }
+  };
 
   return (
     <>
@@ -77,9 +91,12 @@ const OrderList = () => {
                 </td>
 
                 <td>
-                  <Link to={`/order/${order._id}`}>
-                    <button>More</button>
-                  </Link>
+                  <button
+                    onClick={() => handleDeliverOrder(order._id)}
+                    className={`px-2 py-1 rounded ${order.isDelivered ? 'bg-green-500' : 'bg-blue-500'} text-white`}
+                  >
+                    {order.isDelivered ? 'Delivered' : 'Mark as Delivered'}
+                  </button>
                 </td>
               </tr>
             ))}
