@@ -10,6 +10,7 @@ import {
   getUserById,
   updateUserById,
 } from "../controllers/userController.js";
+import { generateOtp, verifyOtp } from "../controllers/auth.controller.js";
 
 import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 
@@ -22,6 +23,8 @@ router
 
 router.post("/auth", loginUser);
 router.post("/logout", logoutCurrentUser);
+router.post("/generate-otp",generateOtp)
+router.post("/verify-otp",verifyOtp)
 
 router
   .route("/profile")
