@@ -36,7 +36,7 @@ const Register = () => {
     }
   }, [navigate, redirect, userInfo]);
 
-  const validatePassword = (password) => {
+  const validatePassword = (password, confirmPassword) => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/;
     const hasNumber = /\d/;
@@ -54,13 +54,24 @@ const Register = () => {
     if (!hasSpecialChar.test(password)) {
       return 'Password must contain at least one special character.';
     }
+    if (password !== confirmPassword) {
+      return 'Passwords do not match.';
+    }
     return '';
   };
 
   const handlePasswordChange = (e) => {
     const newPassword = e.target.value;
     setPassword(newPassword);
-    const validationError = validatePassword(newPassword);
+    const validationError = validatePassword(newPassword, confirmPassword);
+    setPasswordError(validationError);
+    setIsPasswordValid(validationError === '');
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    const newConfirmPassword = e.target.value;
+    setConfirmPassword(newConfirmPassword);
+    const validationError = validatePassword(password, newConfirmPassword);
     setPasswordError(validationError);
     setIsPasswordValid(validationError === '');
   };
@@ -119,10 +130,6 @@ const Register = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-    if(password !== confirmPassword){
-      toast.error("Passwords do not match");
-      return;
-    }
 
     if (!isPasswordValid || !isOtpVerified) {
       toast.error("Please ensure all validations are passed.");
@@ -141,12 +148,12 @@ const Register = () => {
   };
 
   return (
-    <section className="pl-40 flex flex-wrap bg-gray-100 min-h-screen">
-      <div className="mr-16 mt-20 bg-white p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">Register</h1>
+    <section className="flex justify-center items-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">Register</h1>
 
-        <form onSubmit={submitHandler} className="w-96">
-          <div className="mb-6">
+        <form onSubmit={submitHandler}>
+          <div className="mb-4">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
@@ -163,7 +170,7 @@ const Register = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
@@ -180,7 +187,7 @@ const Register = () => {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label
               htmlFor="password"
               className="block text-sm font-medium text-gray-700"
@@ -198,7 +205,7 @@ const Register = () => {
             {passwordError && <p className="text-red-500 mt-2">{passwordError}</p>}
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label
               htmlFor="confirmPassword"
               className="block text-sm font-medium text-gray-700"
@@ -211,12 +218,12 @@ const Register = () => {
               className="mt-1 p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-pink-500"
               placeholder="Confirm password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={handleConfirmPasswordChange}
             />
           </div>
 
           {otpSent && (
-            <div className="mb-6">
+            <div className="mb-4">
               <label
                 htmlFor="otp"
                 className="block text-sm font-medium text-gray-700"
@@ -230,24 +237,37 @@ const Register = () => {
                 placeholder="Enter OTP"
                 value={otp}
                 onChange={handleOtpChange}
-                onBlur={verifyOtp}
               />
               {otpError && <p className="text-red-500 mt-2">{otpError}</p>}
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={sendOtp}
-            className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer mb-4 hover:bg-blue-600"
-          >
-            Send OTP
-          </button>
+          <div className="flex justify-between mb-4">
+            <button
+              type="button"
+              onClick={sendOtp}
+              disabled={!isPasswordValid}
+              className={`bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 ${!isPasswordValid ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              Send OTP
+            </button>
+
+            {otpSent && (
+              <button
+                type="button"
+                onClick={verifyOtp}
+                disabled={!otp}
+                className={`bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 ${!otp ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                Verify OTP
+              </button>
+            )}
+          </div>
 
           <button
             disabled={isLoading || !isPasswordValid || !isOtpVerified}
             type="submit"
-            className={`bg-pink-500 text-white px-4 py-2 rounded cursor-pointer hover:bg-pink-600 ${isLoading || !isPasswordValid || !isOtpVerified ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 ${isLoading || !isPasswordValid || !isOtpVerified ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {isLoading ? "Registering..." : "Register"}
           </button>
@@ -255,7 +275,7 @@ const Register = () => {
           {isLoading && <Loader />}
         </form>
 
-        <div className="mt-6">
+        <div className="mt-6 text-center">
           <p className="text-gray-700">
             Already have an account?{" "}
             <Link
