@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api/": "https://erode-estore.onrender.com",
-      "/uploads/": "https://erode-estore.onrender.com",
+
     },
   },
 });
