@@ -92,7 +92,7 @@ const Register = () => {
         setOtpId(data.data._id);
         toast.success("OTP sent to your email");
       } else {
-        toast.error(data.message);
+        toast.error(data?.message);
       }
     } catch (error) {
       toast.error("Failed to send OTP");
@@ -143,7 +143,7 @@ const Register = () => {
       toast.success("User successfully registered");
     } catch (err) {
       console.log(err);
-      toast.error(err.data.message);
+      toast.error(err?.data?.message);
     }
   };
 

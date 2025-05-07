@@ -41,14 +41,14 @@ const StripePayment = ({ order, onPaymentSuccess }) => {
       });
 
       if (result.error) {
-        toast.error(result.error.message);
+        toast.error(result.error?.message);
       } else {
         if (result.paymentIntent.status === 'succeeded') {
           onPaymentSuccess(result.paymentIntent);
         }
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error?.message);
     }
 
     setIsProcessing(false);

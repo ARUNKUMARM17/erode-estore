@@ -45,7 +45,7 @@ const PrimeMembership = () => {
       ]);
       setLoading(false);
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message);
+      toast.error(error?.response?.data?.message || error?.message);
       setLoading(false);
     }
   };
@@ -81,7 +81,7 @@ const PrimeMembership = () => {
       });
 
       if (error) {
-        toast.error(error.message);
+        toast.error(error?.message);
       } else {
         // Subscribe user to prime
         const { data: subscriptionData } = await axios.post('/api/users/prime/subscribe', {
@@ -100,7 +100,7 @@ const PrimeMembership = () => {
         navigate('/shop'); // Redirect to shop page after successful subscription
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message);
+      toast.error(error?.response?.data?.message || error?.message);
     } finally {
       setProcessing(false);
     }

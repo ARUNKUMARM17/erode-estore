@@ -84,7 +84,7 @@ const ProductDetails = () => {
       setRating(0);
       setComment("");
     } catch (error) {
-      toast.error(error?.data || error.message);
+      toast.error(error?.data || error?.message);
     }
   };
 
@@ -148,7 +148,7 @@ const ProductDetails = () => {
       ) : error ? (
         <div className="container mx-auto px-4 pt-8">
           <Message variant="danger">
-            {error?.data?.message || error.message}
+            {error?.data?.message || error?.message}
           </Message>
         </div>
       ) : (
