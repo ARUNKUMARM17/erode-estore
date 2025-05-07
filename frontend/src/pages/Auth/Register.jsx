@@ -5,6 +5,7 @@ import Loader from "../../components/Loader";
 import { useRegisterMutation } from "../../redux/api/usersApiSlice";
 import { setCredentials } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
+import { BASE_URL } from "../../redux/constants";
 
 const Register = () => {
   const [username, setName] = useState("");
@@ -78,7 +79,7 @@ const Register = () => {
 
   const sendOtp = async () => {
     try {
-      const response = await fetch('/api/users/generate-otp', {
+      const response = await fetch(`${BASE_URL}/api/users/generate-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ const Register = () => {
 
   const verifyOtp = async () => {
     try {
-      const response = await fetch('/api/users/verify-otp', {
+      const response = await fetch(`${BASE_URL}/api/users/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
