@@ -27,6 +27,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.get('/', (req, res) => {
+  res.send('App is running');
+});
+
 app.use("/api/users", userRoutes);
 app.use("/api/users/prime", primeRoutes);
 app.use("/api/category", categoryRoutes);
