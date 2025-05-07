@@ -4,6 +4,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import Stripe from 'stripe';
+import cors from 'cors';
 
 // Utiles
 import connectDB from "./config/db.js";
@@ -26,6 +27,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors());
 
 app.get('/', (req, res) => {
   res.send('App is running');
