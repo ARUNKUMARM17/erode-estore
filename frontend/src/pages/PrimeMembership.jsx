@@ -24,11 +24,7 @@ const PrimeMembership = () => {
     if (userInfo?.isPrimeMember) {
       navigate('/shop');
       toast.info('You are already a Prime member!');
-    } else {
-      if(!userInfo){
-        toast.error('Please login to continue');
-        navigate('/');
-      }
+    } else {   
     
       fetchPlans();
       
